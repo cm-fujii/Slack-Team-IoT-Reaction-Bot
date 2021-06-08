@@ -9,8 +9,8 @@ def lambda_handler(event, context):
     logger.info(event)
 
     return {
-        "statusCode": 200,
-        "body": json.dumps({
-            "message": "hello world",
-        }),
+        'statusCode': 200,
+        'body': json.dumps(
+            {'challenge': body['challenge']},
+        ),
     }
