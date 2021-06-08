@@ -10,6 +10,12 @@ logger.setLevel(logging.INFO)
 
 SLACK_APP_TOKEN_KEY = os.environ['SLACK_APP_TOKEN_KEY']
 
+SLACK_REACTION_NAMES = [
+    'kumamon',
+    'team_iot',
+    'iot_colorful'
+]
+
 ssm = boto3.client('ssm')
 
 def lambda_handler(event: dict, context: dict):
@@ -21,14 +27,16 @@ def lambda_handler(event: dict, context: dict):
         return
 
     token = get_token()
-    reaction_slack(body, token)
+
+    for name in SLACK_REACTION_NAMES:
+        reaction_slack(body, token, name)
 
     return {
         'statusCode': 200,
     }
 
 def is_reaction_message(body: dict) -> bool:
-    return 'いいね' in body['event']['text']
+    return '熊膳' in body['event']['text']
 
 def get_token() -> str:
     res = ssm.get_parameter(
@@ -37,10 +45,9 @@ def get_token() -> str:
     )
     return res['Parameter']['Value']
 
-def reaction_slack(body: dict, token: str) -> None:
+def reaction_slack(body: dict, token: str, name: str) -> None:
     channel = body['event']['channel']
     timestamp = body['event']['event_ts']
-    name = 'good'
 
     headers = {
         'Content-Type': 'application/json',
