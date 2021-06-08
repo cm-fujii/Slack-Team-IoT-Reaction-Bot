@@ -2,6 +2,10 @@ AWSTemplateFormatVersion: '2010-09-09'
 Transform: AWS::Serverless-2016-10-31
 Description: Slack-Team-IoT-Reaction-Bot
 
+Parameters:
+  SlackAppTokenKey:
+    Type: String
+
 Resources:
   SlackChannelSubscribeFunction:
     Type: AWS::Serverless::Function
@@ -9,6 +13,11 @@ Resources:
       CodeUri: src/slack_channel_subscribe/
       Handler: app.lambda_handler
       Runtime: python3.8
+      Policies:
+        - arn:aws:iam::aws:policy/AmazonSSMReadOnlyAccess
+      Environment:
+        Variables:
+          SLACK_APP_TOKEN_KEY: !Ref SlackAppTokenKey
       Timeout: 10
       Events:
         Message:
